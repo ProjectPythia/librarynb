@@ -1,0 +1,31 @@
+#!/bin/bash
+echo -n "Enter path to conda installation: "
+read CONDA_PREFIX
+echo -n "Enter conda command: "
+read CONDA_COMMAND
+echo -n "Enter directory where books will be stored: "
+read REPO_DIR
+CONFIG='{\n"repoDir": "%s",\n"condaCommand": "%s",\n"condaPrefix": "%s"\n}\n'
+printf "$CONFIG" "$REPO_DIR" "$CONDA_COMMAND" "$CONDA_PREFIX" > ~/.config/LibraryNB/config
+
+
+if [ -f $HOME/.local/share/applications/librarynb.desktop ]
+then
+rm $HOME/.local/share/applications/librarynb.desktop
+fi
+
+if [ -f $HOME/.local/share/applications/librarynbLaunch.desktop ]
+then
+rm $HOME/.local/share/applications/librarynbLaunch.desktop
+fi
+
+# sudo cp $(pwd)/nblaunch /usr/local/bin/
+# sudo chmod 777 /usr/local/bin/nblaunch
+# cp $(pwd)/nblaunch.desktop $HOME/.local/share/applications/
+# xdg-mime default nblaunch.desktop x-scheme-handler/nblaunch
+# sudo update-desktop-database
+
+# if [ ! -d $NBLAUNCH_REPO_DIR ]
+# then
+# mkdir $NBLAUNCH_REPO_DIR
+# fi

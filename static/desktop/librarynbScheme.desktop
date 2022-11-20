@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Jupyter Library URL Handler
+Exec=$HOME/LibraryNB/librarynb %u
+Type=Application
+Terminal=false
+MimeType=x-scheme-handler/librarynb;
+NoDisplay=true

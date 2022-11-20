@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Jupyter Library
+Exec=$HOME/LibraryNB/librarynb
+Type=Application
+Terminal=false
