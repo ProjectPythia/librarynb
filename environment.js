@@ -1,9 +1,9 @@
-const { displayOut, displayErr, endProcess } = require('./proc.js')
+const { displayOut, displayErr, endProcess, getEnvScript, getShell } = require('./proc.js')
 const path = require('path')
 var fs = require('fs');
+const config = require('./config.js').getConfig();
 const { spawn } = require('node:child_process');
-const repoDir = process.env.LIBRARYNB_DIR
-const conda_prefix = process.env.CONDA_PREFIX
+const repoDir = config.repoDir
 
 function cloneBook(url, parent) {
     if (! parent){
@@ -14,11 +14,7 @@ function cloneBook(url, parent) {
     });
 }
 
-function removeEnvironment(parentDir) {
-    return spawn(path.join(__dirname, "shell", 'remove'), [conda_prefix], {
-	cwd: parentDir,
-    })
-}
+
 function removeBookDir(bookDir) {
     if (fs.existsSync(bookDir)){
 	fs.rmdirSync(bookDir, { recursive: true });
@@ -68,10 +64,11 @@ async function createBook(win, repoPath) {
     
     win.webContents.send('update-text', 'Book cloned\n');
     win.webContents.send('update-text', 'Creating environement...\n');
-
-    const creator = spawn('mamba', ['env', 'create', '--prefix', './env', '-f', 'environment.yml'], {
+    const creator = spawn(getEnvScript(), {
 	cwd: fullPath,
-    })
+	shell: getShell()
+    });
+    
     displayOut(win, creator)
     displayErr(win, creator).
     exitCode = await endProcess(creator);

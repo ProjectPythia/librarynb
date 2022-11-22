@@ -1,18 +1,23 @@
 const path = require('path')
 var fs = require('fs');
 const { BrowserWindow } = require('electron')
-const { ipcMain } = require('electron')
+const { ipcMain, dialog } = require('electron')
 const { createBook } = require('./environment.js')
 const { launchBook } = require('./launcher.js')
-const { dialog } = require('electron')
 const proc = require('./proc.js')
-const repoDir = proc.config.repoDir
+const { loadBooks } = require('./book.js')
+const { validate, createConfig, getConfig} = require('./config.js');
+
+const config = getConfig()
+
+if(config) {
+    var repoDir = config.repoDir;
+}
 
 async function createJupyterWindow (url) {
     url = new URL(url);
     repoPath = path.join(url.hostname,  url.pathname);
     const fullPath = path.join(repoDir, repoPath);
-    console.log(fullPath)
     
     let jupyterWindow = new BrowserWindow({
 	width: 800,
@@ -27,7 +32,7 @@ async function createJupyterWindow (url) {
 	    width: 800,
 	    height: 450,
 	    webPreferences: {
-		preload: path.join(__dirname, 'preload', 'environment.js'),
+		preload: path.join(__dirname, 'preload', 'environment.js')
 	    },
 	    show: false,
 	    autoHideMenuBar: true,
@@ -62,7 +67,7 @@ async function createLauncherWindow() {
 	width: 800,
 	height: 450,
 	webPreferences: {
-	    preload: path.join(__dirname, 'launchPreload.js'),
+	    preload: path.join(__dirname, 'preload', 'launcher.js')
 	},
 	autoHideMenuBar: true,
     });
@@ -71,7 +76,7 @@ async function createLauncherWindow() {
 	win = null;
     });
     
-    win.loadFile('static/html/launcher.html');
+    win.loadFile(path.join(__dirname, 'static', 'html', 'launcher.html'));
     
     ipcMain.on('ready', () => {
 	books = loadBooks(path.join(repoDir))
@@ -83,7 +88,42 @@ async function createLauncherWindow() {
     });
 }
 
+function createSetupWindow() {
+    let win = new BrowserWindow({
+	width: 800,
+	height: 450,
+	webPreferences: {
+	    preload: path.join(__dirname, 'preload', 'setup.js')
+	}
+    });
+    win.on('close', () => {
+	win = null;
+    });
+
+    ipcMain.on('save', (event, config) => {
+	if (validate(config)) {
+	    createConfig(config);
+	    win.close();
+	} else {
+	    throw "Invalid Config"
+	}
+    });
+
+    ipcMain.handle('dialog:selectDir', async () => {
+	const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+	    properties: ['openDirectory']
+	})
+	if (canceled) {
+	    return
+	} else {
+	    return filePaths[0]
+	}
+    })
+
+    win.loadFile(path.join(__dirname, 'static', 'html', 'setup.html'));
+}
 module.exports = {
     createLauncherWindow: createLauncherWindow,
-    createJupyterWindow: createJupyterWindow
+    createJupyterWindow: createJupyterWindow,
+    createSetupWindow: createSetupWindow
 }

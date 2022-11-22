@@ -1,23 +1,12 @@
 var fs = require('fs');
 const path = require('path')
+const config = require('./config.js').getConfig()
 
-const home = process.env.HOME
 const os = process.platform
 
-function getConfigPath() {
-    if (os === 'linux') {
-	return path.join(home, '.config', 'LibraryNB', 'config.json')
-    } else {
-	throw "Coming soon to other operating systems";
-    }
-}
-
-const configFile = fs.readFileSync(getConfigPath());
-const config = JSON.parse(configFile);
-
-
 condaPrefix = config.condaPrefix
-condaCommand = config.condaCommand
+condaCommand = config.condaProgram
+
 const linuxMambaSetupScript = `
 __conda_setup="\$('${condaPrefix}/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ \$? -eq 0 ]; then
@@ -39,6 +28,8 @@ const linuxLaunchScript = `
 ${condaCommand} activate ./env
 nohup jupyter lab --no-browser >> /dev/null 2>&1 &
 echo \$!`
+
+const linuxEnvScript = 'mamba env create --prefix ./env -f environment.yml'
 
 const linuxListScript = `
 ${condaCommand} activate nblaunch-dev
@@ -89,6 +80,14 @@ function getListScript() {
     }
 }
 
+function getEnvScript() {
+    if (os === 'linux') {
+	return linuxMambaSetupScript + linuxEnvScript;
+    } else {
+	throw "Coming soon to other operating systems";
+    }
+}
+
 module.exports = {
     displayOut: displayOut,
     displayErr: displayErr,
@@ -96,5 +95,6 @@ module.exports = {
     getShell: getShell,
     getListScript: getListScript,
     getLaunchScript: getLaunchScript,
+    getEnvScript: getEnvScript,
     config: config
 }

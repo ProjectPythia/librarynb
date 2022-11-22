@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <title>LibraryNB</title>
+    <link rel="stylesheet" type="text/css" href="../css/styles.css" />
+  </head>
+  <body>
+      <form>
+	  <label for="conda-program">Name of Conda program:</label>
+	  <select name="conda-program" id="conda-program">
+	      <option value="conda">Conda</option>
+	      <option value="mamba">Mamba</option>
+	  </select><br><br>
+	  <label for="conda-prefix">Path to Conda installation:</label>
+	  <button type="button" id="conda-prefix-btn">Select Directory</button>
+	  File path: <strong id="conda-prefix"></strong><br><br>
+	  <label for="repo-dir">Directory to store books:</label>
+	  <button type="button" id="repo-dir-btn">Select Directory</button>
+	  File path: <strong id="repo-dir"></strong><br><br>
+	  <br><br>
+	  <button type='button' id='save'>Save</button>
+      </form>
+      <script src='../js/setup.js'></script>
+  </body>
+</html>

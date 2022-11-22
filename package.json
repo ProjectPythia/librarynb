@@ -1,5 +1,5 @@
 {
-  "name": "nblaunch",
+  "name": "LibraryNB",
   "version": "0.0.1",
   "description": "Launcher for Jupyter Notebook projects",
   "main": "main.js",

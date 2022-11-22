@@ -1,10 +1,16 @@
 const { app, BrowserWindow } = require('electron')
 const { ipcMain } = require('electron')
-const { createLauncherWindow, createJupyterWindow } = require('./windows.js')
+const { createLauncherWindow, createJupyterWindow, createSetupWindow } = require('./windows.js')
+const config = require('./config.js').getConfig()
 const { dialog } = require('electron')
+const { registerProtocol } = require('./protocol.js');
 
 app.whenReady().then(() => {
-    if (process.argv[1]) {
+    if(! config) {
+	createSetupWindow();
+	registerProtocol()
+    }
+    else if(process.argv[1]) {
 	createJupyterWindow(process.argv[1]);
     } else {
 	createLauncherWindow();
@@ -20,7 +26,7 @@ app.whenReady().then(() => {
 
 //shutdown code
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit()
+    if (process.platform !== 'darwin') app.quit();
 })
 
 
