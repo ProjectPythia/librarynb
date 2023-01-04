@@ -52,16 +52,16 @@ async function launchBook(fullPath) {
 	console.log(`${data}`)
     });
 
-    let output = '';
-    for await (const chunk of launcher.stdout) {
-	output += chunk
-    } 
-    let pid = parseInt(output.trim())
+    //let output = '';
+    //for await (const chunk of launcher.stdout) {
+	//output += chunk
+    //} 
+    //let pid = parseInt(output.trim())
 
-    let exitCode = await proc.endProcess(launcher)
-    if (exitCode) {
-	console.log(`launcher process exited with code ${exitCode}`);
-    }
+    //let exitCode = await proc.endProcess(launcher)
+    //if (exitCode) {
+	//console.log(`launcher process exited with code ${exitCode}`);
+    //}
 
     let jupyterUrl = await getJupyterUrl(fullPath)
     while (! jupyterUrl){
@@ -69,7 +69,7 @@ async function launchBook(fullPath) {
 	jupyterUrl = await getJupyterUrl(fullPath)
     }
 
-    return {pid: pid,
+    return {launcher: launcher,
 	    url: jupyterUrl}
 }
 

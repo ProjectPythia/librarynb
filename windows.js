@@ -18,7 +18,6 @@ async function createJupyterWindow (url) {
     url = new URL(url);
     repoPath = path.join(url.hostname,  url.pathname);
     const fullPath = path.join(repoDir, repoPath);
-    
     let jupyterWindow = new BrowserWindow({
 	width: 800,
 	height: 450,
@@ -46,7 +45,7 @@ async function createJupyterWindow (url) {
 	});
 	win.show()
 	
-	let bookCreated = await createBook(win, repoPath);
+	let bookCreated = await createBook(win, url);
 	if (! bookCreated) {
 	    throw 'unable to create book';
 	}
@@ -57,7 +56,7 @@ async function createJupyterWindow (url) {
     const jupyter = await launchBook(fullPath)
     jupyterWindow.loadURL(jupyter.url)    
     jupyterWindow.on('close', function(){
-	process.kill(jupyter.pid)
+	jupyter.launcher.kill()
 	jupyterWindow = null
     }); 
 }
@@ -69,7 +68,7 @@ async function createLauncherWindow() {
 	webPreferences: {
 	    preload: path.join(__dirname, 'preload', 'launcher.js')
 	},
-	autoHideMenuBar: true,
+	//autoHideMenuBar: true,
     });
 
     win.on('close', () => {
@@ -79,6 +78,7 @@ async function createLauncherWindow() {
     win.loadFile(path.join(__dirname, 'static', 'html', 'launcher.html'));
     
     ipcMain.on('ready', () => {
+		console.log("loading books")
 	books = loadBooks(path.join(repoDir))
 	win.webContents.send('load-books', books)
     });
@@ -101,12 +101,12 @@ function createSetupWindow() {
     });
 
     ipcMain.on('save', (event, config) => {
-	if (validate(config)) {
-	    createConfig(config);
-	    win.close();
-	} else {
-	    throw "Invalid Config"
-	}
+		let results = createConfig(config)
+	    if (results.success){
+	    	win.close();
+		} else {
+			win.webContents.send('display-errors', results.errors);
+		}
     });
 
     ipcMain.handle('dialog:selectDir', async () => {

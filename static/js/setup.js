@@ -23,3 +23,7 @@ saveBtn.addEventListener('click', function() {
     } 
     window.electronAPI.save(config)
 });
+
+window.electronAPI.onDisplayErrors((_event, errors) => {
+  console.log(errors);
+});

@@ -2,31 +2,47 @@ const glob = require('glob');
 const YAML = require('yaml');
 const path = require('path');
 const fs = require("fs");
-protocol = "nblaunch"
+const config = require('./config').getConfig()
+const os = process.platform;
 
-function getLaunchUrl(launchRepoDir, projectDir) {
-    launchUrl = protocol + ":/" + projectDir.replace(launchRepoDir, "")
+if(config) {
+    var repoDir = config.repoDir;
+}
+protocol = "librarynb"
+
+function getLaunchUrl(projectDir) {
+    let launchUrl = protocol + ":/" + projectDir.replace(repoDir, "")
     return launchUrl
 }
 
-function loadBooks (launchRepoDir) {
-    books = [];
-    const projectDirs = glob.sync(path.join(launchRepoDir, "*", "*", "*"))
+function loadBooks () {
+	let books = []
+	let globPath = ''
+    if (os === 'win32') { //Glob only uses posix paths
+		let prefix = path.normalize(repoDir).replaceAll("\\", "/").substring(2);
+		globPath = path.posix.join(prefix, '*', '*', '*')
+	} else {
+		globPath = path.join(repoDir, '*', '*', '*')
+	}
+	console.log(globPath)
+    const projectDirs = glob.sync(globPath)
+	console.log(projectDirs)
     for (let i in projectDirs) {
 	configFile = fs.readFileSync(path.join(projectDirs[i], "_config.yml"), 'utf8');
-	config = YAML.parse(configFile)
+	bookConfig = YAML.parse(configFile)
 	let thumbnail = ''
-	if (! ('thumbnail' in config)) {
+	if (! ('thumbnail' in bookConfig)) {
 	    thumbnail = false;
 	} else {
-	    thumbnail = path.join(projectDirs[i], config.thumbnail)
+	    thumbnail = path.join(projectDirs[i], bookConfig.thumbnail)
 	}
+	console.log(thumbnail)
 	books.push({
-	    title: config.title,
-	    author: config.author,
+	    title: bookConfig.title,
+	    author: bookConfig.author,
 	    thumbnail: thumbnail,
 	    projectDir: projectDirs[i],
-	    launchUrl: getLaunchUrl(launchRepoDir, projectDirs[i]) 
+	    launchUrl: getLaunchUrl(projectDirs[i]) 
 	})
     }
     return books

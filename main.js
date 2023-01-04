@@ -5,6 +5,8 @@ const config = require('./config.js').getConfig()
 const { dialog } = require('electron')
 const { registerProtocol } = require('./protocol.js');
 
+if (require('electron-squirrel-startup')) return;
+
 app.whenReady().then(() => {
     if(! config) {
 	createSetupWindow();

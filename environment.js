@@ -39,31 +39,32 @@ function removeAccountDir(accountDir) {
     return false;
 }
 
-async function createBook(win, repoPath) {
+async function createBook(win, url) {
+    let repoPath = path.join(url.hostname,  url.pathname);
     let directoryCreated = false;
-    const accountDir = path.join(repoDir, repoPath.substring(0, repoPath.lastIndexOf("/")));
+    const accountDir = path.join(repoDir, path.dirname(repoPath));
     const fullPath = path.join(repoDir, repoPath);
     const repoName = path.basename(repoPath);
-    const gitUrl = "https://" + repoPath + '.git';
+    const gitUrl = "https://" + url.hostname + url.pathname + ".git";
     
     //Warning user input to child process argument
     win.webContents.send('update-text', "Creating Project...(This might take a few minutes)");
     directoryCreated = createAccountDir(accountDir);
-    
     cloner = cloneBook(gitUrl, accountDir);
     displayOut(win, cloner);
     displayErr(win, cloner);
     let exitCode = await endProcess(cloner)
     if (exitCode) {
-	win.webContents.send('update-text', "Err: Could not clone book")
+	    win.webContents.send('update-text', "Err: Could not clone book")
 	if (directoryCreated) {
 	    removeAccountDir(accountDir);
 	}
 	return false;
     }
-    
+    console.log(fullPath);
     win.webContents.send('update-text', 'Book cloned\n');
     win.webContents.send('update-text', 'Creating environement...\n');
+    console.log(getEnvScript()); 
     const creator = spawn(getEnvScript(), {
 	cwd: fullPath,
 	shell: getShell()

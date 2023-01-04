@@ -12,5 +12,6 @@ function registerProtocol() {
 }
 
 module.exports = {
-    registerProtocol: registerProtocol
+    registerProtocol: registerProtocol,
+    protocolPrefix: protocolPrefix
 }
