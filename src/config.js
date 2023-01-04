@@ -1,13 +1,13 @@
-var fs = require('fs');
-const path = require('path')
-const { app } = require('electron')
+var fs = require("fs");
+const path = require("path");
+const { app } = require("electron");
 const supportedCondaProgarams = new Set(["mamba", "conda"]);
 
-const os = process.platform
+const os = process.platform;
 var config = null;
 
 function getConfigPath() {
-    return path.join(app.getPath('userData'), 'config.json')
+    return path.join(app.getPath("userData"), "config.json");
 }
 
 function validate(config) {
@@ -61,25 +61,25 @@ function addToWhiteList(url) {
 
 function configExists() {
     if(fs.existsSync(getConfigPath())) {
-	return true;
+        return true;
     } else {
-	return false;
+        return false;
     }
 }
 	
 function getConfig() {
     if (config) {
-	return config;
+        return config;
     } else if(configExists()){
-	let configFile = fs.readFileSync(getConfigPath());
-	config = JSON.parse(configFile);
-	return config;
+        let configFile = fs.readFileSync(getConfigPath());
+        config = JSON.parse(configFile);
+        return config;
     } else {
-	return false;
+        return false;
     }
 }
 
 module.exports = {
     getConfig: getConfig,
     createConfig: createConfig
-}
+};
