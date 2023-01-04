@@ -55,7 +55,7 @@ async function createJupyterWindow (url) {
     const jupyter = await launchBook(fullPath);
     jupyterWindow.loadURL(jupyter.url);    
     jupyterWindow.on("close", function(){
-        jupyter.launcher.kill()
+        jupyter.server.kill()
         jupyterWindow = null;
     }); 
 }

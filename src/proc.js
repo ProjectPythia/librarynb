@@ -5,13 +5,15 @@ const os = process.platform;
 const condaPrefix = config.condaPrefix;
 const condaCommand = config.condaProgram;
 
-const winCondaSetup = `${condaPrefix}\\Scripts\\activate.bat && `
+const winCondaSetup = `${condaPrefix}\\Scripts\\activate.bat && `;
 
-const winEnvScript = `${condaCommand} env create --prefix .\\env -f environment.yml`
+const winEnvScript = `${condaCommand} env create --prefix %cd%\\env -f environment.yml`;
 
-const winLaunchScript = `${condaCommand} activate %cd%\\env & jupyter lab --no-browser`
+const winLaunchScript = `${condaCommand} activate %cd%\\env & jupyter lab --no-browser`;
 
-const winListScript = `${condaCommand} activate %cd%\\env && jupyter lab list && ${condaCommand} deactivate`
+const winListScript = `${condaCommand} activate %cd%\\env && jupyter lab list && ${condaCommand} deactivate`;
+
+const winRemoveScript = `${condaCommand} env remove --prefix %cd%\\env`;
 
 const linuxSetupScript = `
 __conda_setup="$('${condaPrefix}/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
@@ -108,6 +110,8 @@ function getEnvScript() {
 function getRemoveScript() {
     if(os === "linux") {
         return linuxSetupScript + linuxRemoveScript;
+    } else if(os === 'win32'){
+        return winCondaSetup + winRemoveScript;
     } else {
         throw "Coming soon to other operating systems";
     }

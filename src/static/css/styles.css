@@ -131,6 +131,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .book-cover {
+  position: relative;
   opacity: 1;
   display: block;
   width: 100%;
@@ -142,9 +143,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .thumbnail {
   height: 200px;
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
+  width: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 
 

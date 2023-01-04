@@ -77,6 +77,7 @@ function loadBooks() {
         let configFile = fs.readFileSync(path.join(projectDirs[i], "_config.yml"), "utf8");
         const config = YAML.parse(configFile);
         books.push(bookFromConfig(config, projectDirs[i]));
+        fs.closeSync(configFile);
     }
     return books;
 }
@@ -100,9 +101,7 @@ async function removeBook(projectDir) {
             return false;
         }
     }
-    if(fs.existsSync(projectDir)) {
-        removeBookDir(projectDir);
-    }
+    removeBookDir(projectDir);
     return true;
 }
 

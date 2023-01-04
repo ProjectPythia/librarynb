@@ -13,6 +13,7 @@ app.whenReady().then(() => {
     else if(process.argv[1]) {
         createJupyterWindow(process.argv[1]);
     } else {
+        console.log(app.getPath("userData"));
         createLibraryWindow();
     }
 
