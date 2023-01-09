@@ -1,30 +1,33 @@
 module.exports = {
-    packagerConfig: {
-	protocols: [
+  packagerConfig: {
+    protocols: [
 	    {
-		protocol: 'librarynb',
-		name: 'librarynb',
-		schemes: 'librarynb'
+		    protocol: 'librarynb',
+		    name: 'librarynb',
+		    schemes: 'librarynb'
 	    }
 	]
+  },
+  rebuildConfig: {},
+  makers: [
+    {
+      name: '@electron-forge/maker-squirrel',
+      config: {
+        certificateFile: './cert.pfx',
+        certificatePassword: process.env.CERTIFICATE_PASSWORD,
+      }
     },
-    rebuildConfig: {},
-    makers: [
-	{
-	    name: '@electron-forge/maker-squirrel',
-	    config: {},
-	},
-	{
-	    name: '@electron-forge/maker-zip',
-	    platforms: ['darwin'],
-	},
-	{
-	    name: '@electron-forge/maker-deb',
-	    config: {},
-	},
-	{
-	    name: '@electron-forge/maker-rpm',
-	    config: {},
-	},
+    {
+      name: '@electron-forge/maker-zip',
+      platforms: ['darwin'],
+    },
+    {
+      name: '@electron-forge/maker-deb',
+      config: {},
+    },
+    {
+      name: '@electron-forge/maker-rpm',
+      config: {},
+    },
   ],
 };

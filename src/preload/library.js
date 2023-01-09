@@ -7,5 +7,4 @@ contextBridge.exposeInMainWorld("electronAPI", {
     openRepo: (url) => ipcRenderer.send("open-repo", url),
     showFolder: (projectDir) => ipcRenderer.send("show-folder", projectDir),
     deleteBook: (projectDir) => ipcRenderer.invoke("delete-book", projectDir)
-    // we can also expose variables, not just functions
 });

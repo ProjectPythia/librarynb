@@ -6,6 +6,7 @@ const glob = require("glob");
 const YAML = require("yaml");
 const path = require("path");
 const fs = require("fs");
+const os = process.platform;
 
 // Functions for loading books into the library
 function getLaunchUrl(projectDir) {
@@ -64,7 +65,14 @@ function bookFromConfig(config, projectDir) {
 
 function loadBooks() {
     let books = [];
-    const projectDirs = glob.sync(path.join(repoDir, "*", "*", "*"));
+    let globPath = "";
+    if (os === "win32") { //Glob only uses posix paths
+        let prefix = path.normalize(repoDir).replaceAll("\\", "/").substring(2);
+        globPath = path.posix.join(prefix, "*", "*", "*");
+    } else {
+        globPath = path.join(repoDir, "*", "*", "*");
+    }
+    const projectDirs = glob.sync(globPath);
     for (let i in projectDirs) {
         let configFile = fs.readFileSync(path.join(projectDirs[i], "_config.yml"), "utf8");
         const config = YAML.parse(configFile);
@@ -92,9 +100,7 @@ async function removeBook(projectDir) {
             return false;
         }
     }
-    if(fs.existsSync(projectDir)) {
-        removeBookDir(projectDir);
-    }
+    removeBookDir(projectDir);
     return true;
 }
 
@@ -126,11 +132,12 @@ function removeAccountDir(accountDir) {
     return false;
 }
 
-async function createBook(win, repoPath) {
+async function createBook(win, url) {
+    let repoPath = path.join(url.hostname,  url.pathname);
     let directoryCreated = false;
-    const accountDir = path.join(repoDir, repoPath.substring(0, repoPath.lastIndexOf("/")));
+    const accountDir = path.join(repoDir, path.dirname(repoPath));
     const fullPath = path.join(repoDir, repoPath);
-    const gitUrl = "https://" + repoPath + ".git";
+    const gitUrl = "https://" + url.hostname + url.pathname + ".git";
 
     //Warning user input to child process argument
     win.webContents.send("update-text", "Creating Project...(This might take a few minutes)");
@@ -207,21 +214,21 @@ async function getJupyterUrl(fullPath) {
 }
 
 async function launchBook(fullPath) {
-    const launcher = spawn(proc.getLaunchScript(), {
+    const server = spawn(proc.getLaunchScript(), {
         cwd: fullPath,
         shell: proc.getShell()
     });
 
-    let output = "";
-    for await (const chunk of launcher.stdout) {
-        output += chunk;
-    }
-    let pid = parseInt(output.trim());
+    //let output = "";
+    //for await (const chunk of launcher.stdout) {
+    //output += chunk;
+    //}
+    //let pid = parseInt(output.trim());
 
-    let exitCode = await proc.endProcess(launcher);
-    if (exitCode) {
-        throw `launcher process exited with code ${exitCode}`;
-    }
+    //let exitCode = await proc.endProcess(launcher);
+    //if (exitCode) {
+    //throw `launcher process exited with code ${exitCode}`;
+    //}
     
     let jupyterUrl = await getJupyterUrl(fullPath);
     while (!jupyterUrl) {
@@ -230,7 +237,7 @@ async function launchBook(fullPath) {
     }
 
     return {
-        pid: pid,
+        server: server,
         url: jupyterUrl
     };
 }

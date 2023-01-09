@@ -71,15 +71,19 @@ function TitleBar(title) {
 }
 
 function Thumbnail(thumbnailPath) {
-    let thumbnailElem = document.createElement("div");
-    thumbnailElem.setAttribute("class", "thumbnail");
+    
     if (thumbnailPath) {
-        thumbnailElem.style.backgroundImage=`url('${thumbnailPath}')`;	
+        let thumbnailElem = document.createElement("img");
+        thumbnailElem.setAttribute("class", "thumbnail");
+        thumbnailElem.setAttribute("src", thumbnailPath);
+        return thumbnailElem;	
     } else {
+        let thumbnailElem = document.createElement("div");
+        thumbnailElem.setAttribute("class", "thumbnail");
         let randomColor = Math.floor(Math.random()*16777215).toString(16);
         thumbnailElem.style.backgroundColor = "#" + randomColor;
+        return thumbnailElem;
     }
-    return thumbnailElem;
 }
 
 function Metadata(props) {
@@ -106,7 +110,7 @@ function Metadata(props) {
 
     if (props.logoPath) {
         let logoEl = document.createElement("img");
-        logoEl.src = props.logoPath;
+        logoEl.setAttribute("src", props.logoPath);
         textCon.appendChild(logoEl);
     }
 
