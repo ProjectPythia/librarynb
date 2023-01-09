@@ -55,7 +55,7 @@ async function createJupyterWindow (url) {
     const jupyter = await launchBook(fullPath);
     jupyterWindow.loadURL(jupyter.url);    
     jupyterWindow.on("close", function(){
-        jupyter.server.kill()
+        jupyter.server.kill();
         jupyterWindow = null;
     }); 
 }
@@ -79,6 +79,10 @@ async function createLibraryWindow() {
     win.webContents.setWindowOpenHandler(function({ url }) {
         shell.openExternal(url);
         return { action: "deny" };
+    });
+
+    ipcMain.on("launch-book", (event, url) => {
+        createJupyterWindow(url);
     });
 
     ipcMain.on("open-repo", (e, url) => {
@@ -115,10 +119,6 @@ async function createLibraryWindow() {
         let books = loadBooks(path.join(repoDir));
         win.webContents.send("load-books", books);
     });
-
-    ipcMain.on("launch-book", (event, url) => {
-        createJupyterWindow(url);
-    });
 }
 
 function createSetupWindow() {
@@ -134,12 +134,12 @@ function createSetupWindow() {
     });
 
     ipcMain.on("save", (event, config) => {
-        let results = createConfig(config)
-	    if (results.success){
-	    	win.close();
-		} else {
-			win.webContents.send('display-errors', results.errors);
-		}
+        let results = createConfig(config);
+        if (results.success){
+            win.close();
+        } else {
+            win.webContents.send("display-errors", results.errors);
+        }
     });
 
     ipcMain.handle("dialog:selectDir", async () => {

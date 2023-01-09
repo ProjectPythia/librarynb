@@ -11,7 +11,7 @@ function getConfigPath() {
 }
 
 function validate(config) {
-    let errors = []
+    let errors = [];
     if (errors.length === 0){
         return {success: true};
     } else {
@@ -20,29 +20,29 @@ function validate(config) {
 }
 
 function writeConfig(config) {
-    let results = validate(config)
+    let results = validate(config);
     if (!results.success) {
-        return results
+        return results;
     }
     try {
-        fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2))
+        fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2));
     } catch (error) {
-        throw `Unable to write to config file: ${error}`
+        throw `Unable to write to config file: ${error}`;
     }
     return results;
 }
 
 function createConfig(config) {
     if (!configExists()) {
-        let configPath = getConfigPath()
-        let directory = path.dirname(configPath)
+        let configPath = getConfigPath();
+        let directory = path.dirname(configPath);
         if (! fs.existsSync(directory)){
-	        if (!fs.mkdirSync(directory, { recursive: true })) {
-                throw "Config directory does not exist and unable to create it"
+            if (!fs.mkdirSync(directory, { recursive: true })) {
+                throw "Config directory does not exist and unable to create it";
             }
         }
     }
-    return writeConfig(config)
+    return writeConfig(config);
 }
 
 function addToWhiteList(url) {
@@ -50,13 +50,13 @@ function addToWhiteList(url) {
         throw "url must be a string";
     }
     let config = getConfig();
-    if (! whiteList in config){
+    if (!("whiteList" in config)){
         config.whiteList = [url];
     } else {
-        config.whiteList.push(url)
+        config.whiteList.push(url);
     }
-    writeConfig(config)
-    return true
+    writeConfig(config);
+    return true;
 }
 
 function configExists() {

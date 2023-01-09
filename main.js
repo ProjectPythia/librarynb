@@ -3,7 +3,9 @@ const { createLibraryWindow, createJupyterWindow, createSetupWindow } = require(
 const config = require("./src/config.js").getConfig();
 const { registerProtocol } = require("./src/protocol.js");
 
-if (require('electron-squirrel-startup')) return;
+if (require('electron-squirrel-startup')) {
+    app.quit();
+}
 
 app.whenReady().then(() => {
     if(! config) {

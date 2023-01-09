@@ -70,7 +70,7 @@ function endProcess(process){
 function getShell() {
     if (os === "linux"){
         return "/bin/bash";
-    } else if (os === 'win32') {
+    } else if (os === "win32") {
         return true;
     } else {
         throw "Coming soon to other operating systems";
@@ -80,7 +80,7 @@ function getShell() {
 function getLaunchScript() {
     if (os === "linux") {
         return linuxSetupScript + linuxLaunchScript;
-    } else if(os === 'win32'){
+    } else if(os === "win32"){
         return winCondaSetup + winLaunchScript;
     } else {
         throw "Coming soon to other operating systems";
@@ -90,7 +90,7 @@ function getLaunchScript() {
 function getListScript() {
     if (os === "linux") {
         return linuxSetupScript + linuxListScript;
-    } else if(os === 'win32'){
+    } else if(os === "win32"){
         return winCondaSetup + winListScript;
     } else {
         throw "Coming soon to other operating systems";
@@ -100,7 +100,7 @@ function getListScript() {
 function getEnvScript() {
     if (os === "linux") {
         return linuxSetupScript + linuxEnvScript;
-    } else if(os === 'win32'){
+    } else if(os === "win32"){
         return winCondaSetup + winEnvScript;
     } else {
         throw "Coming soon to other operating systems";
@@ -110,7 +110,7 @@ function getEnvScript() {
 function getRemoveScript() {
     if(os === "linux") {
         return linuxSetupScript + linuxRemoveScript;
-    } else if(os === 'win32'){
+    } else if(os === "win32"){
         return winCondaSetup + winRemoveScript;
     } else {
         throw "Coming soon to other operating systems";

@@ -65,19 +65,18 @@ function bookFromConfig(config, projectDir) {
 
 function loadBooks() {
     let books = [];
-    let globPath = ''
-    if (os === 'win32') { //Glob only uses posix paths
-		let prefix = path.normalize(repoDir).replaceAll("\\", "/").substring(2);
-		globPath = path.posix.join(prefix, '*', '*', '*');
-	} else {
-		globPath = path.join(repoDir, '*', '*', '*');
-	}
+    let globPath = "";
+    if (os === "win32") { //Glob only uses posix paths
+        let prefix = path.normalize(repoDir).replaceAll("\\", "/").substring(2);
+        globPath = path.posix.join(prefix, "*", "*", "*");
+    } else {
+        globPath = path.join(repoDir, "*", "*", "*");
+    }
     const projectDirs = glob.sync(globPath);
     for (let i in projectDirs) {
         let configFile = fs.readFileSync(path.join(projectDirs[i], "_config.yml"), "utf8");
         const config = YAML.parse(configFile);
         books.push(bookFromConfig(config, projectDirs[i]));
-        fs.closeSync(configFile);
     }
     return books;
 }
@@ -222,13 +221,13 @@ async function launchBook(fullPath) {
 
     //let output = "";
     //for await (const chunk of launcher.stdout) {
-        //output += chunk;
+    //output += chunk;
     //}
     //let pid = parseInt(output.trim());
 
     //let exitCode = await proc.endProcess(launcher);
     //if (exitCode) {
-        //throw `launcher process exited with code ${exitCode}`;
+    //throw `launcher process exited with code ${exitCode}`;
     //}
     
     let jupyterUrl = await getJupyterUrl(fullPath);
